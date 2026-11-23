@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Ausschreibungs-Radar</title>
+<style>
+:root{
+  --grund:#e8ece6; --flaeche:#fcfcfa; --tinte:#15211e; --leise:#5d6c66;
+  --linie:#c9d2c9; --linie-fein:#dde3dc;
+  --signal:#2c6350; --dringend:#9c3b16; --neu:#31567c;
+  --radius:3px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:"Source Sans 3","Source Sans Pro","Segoe UI",Inter,system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--grund);color:var(--tinte);font-family:var(--sans);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+
+/* Anmeldung */
+#tor{max-width:380px;margin:14vh auto 0;padding:28px;background:var(--flaeche);
+  border:1px solid var(--linie);border-radius:var(--radius)}
+#tor h1{font-size:26px}
+#tor label{display:block;font-size:14px;color:var(--leise);margin:16px 0 6px}
+#tor input[type=password]{width:100%;font-family:inherit;font-size:16px;padding:9px 10px;
+  border:1px solid var(--linie);border-radius:var(--radius);background:#fff;color:var(--tinte)}
+#tor .merk{display:flex;gap:8px;align-items:center;margin:12px 0 0;font-size:14px;color:var(--leise)}
+#tor button{margin-top:18px;width:100%;font-family:inherit;font-size:15px;padding:9px 12px;
+  border:0;border-radius:var(--radius);background:var(--tinte);color:#fff;cursor:pointer}
+#tor button[disabled]{opacity:.6;cursor:wait}
+#tor .fehler{color:var(--dringend);font-size:14px;min-height:1.5em;margin:10px 0 0}
+#app{display:none}
+
+header{padding:38px 0 20px;border-bottom:1px solid var(--linie);display:flex;
+  align-items:flex-end;gap:16px;flex-wrap:wrap}
+header .titelblock{flex:1}
+h1{font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.1;margin:0 0 6px;
+  letter-spacing:-0.01em}
+.stand{color:var(--leise);font-size:14px;margin:0;font-variant-numeric:tabular-nums}
+.demo{margin:14px 0 0;padding:9px 12px;background:#fdf6e3;border-left:3px solid #b8860b;
+  font-size:14px;border-radius:0 var(--radius) var(--radius) 0}
+.abmelden{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px solid var(--linie);
+  background:var(--flaeche);border-radius:var(--radius);cursor:pointer;color:var(--tinte)}
+
+.leiste{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:16px 0;
+  position:sticky;top:0;background:var(--grund);z-index:5;border-bottom:1px solid var(--linie-fein)}
+input[type=search],select{font-family:inherit;font-size:14px;padding:7px 10px;
+  border:1px solid var(--linie);background:var(--flaeche);color:var(--tinte);border-radius:var(--radius)}
+input[type=search]{flex:1 1 240px;min-width:180px}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--signal);outline-offset:1px}
+.schalter{display:flex;gap:0;border:1px solid var(--linie);border-radius:var(--radius);overflow:hidden}
+.schalter button{font-family:inherit;font-size:14px;padding:7px 12px;border:0;
+  background:var(--flaeche);color:var(--leise);cursor:pointer;border-right:1px solid var(--linie-fein)}
+.schalter button:last-child{border-right:0}
+.schalter button[aria-pressed=true]{background:var(--tinte);color:#fff}
+.zaehler{margin-left:auto;color:var(--leise);font-size:14px;font-variant-numeric:tabular-nums}
+
+ol{list-style:none;margin:0;padding:0}
+li.eintrag{display:grid;grid-template-columns:74px 1fr;gap:0 18px;
+  border-bottom:1px solid var(--linie-fein);background:var(--flaeche)}
+li.eintrag:first-child{border-top:1px solid var(--linie-fein)}
+.frist{padding:18px 0 18px 14px;text-align:right;border-right:3px solid var(--linie-fein);
+  font-variant-numeric:tabular-nums}
+.frist .zahl{display:block;font-size:26px;line-height:1;font-weight:600;letter-spacing:-0.02em}
+.frist .einheit{display:block;font-size:12px;color:var(--leise);margin-top:3px}
+li.knapp .frist{border-right-color:var(--dringend)}
+li.knapp .frist .zahl{color:var(--dringend)}
+li.bald .frist{border-right-color:#c99a2e}
+li.weg .frist .zahl,li.weg .frist .einheit{color:#a3aca7}
+li.weg{opacity:.62}
+.inhalt{padding:16px 16px 16px 0;min-width:0}
+.kopf{display:flex;align-items:flex-start;gap:10px}
+.titel{font-family:var(--serif);font-size:18px;line-height:1.3;margin:0;font-weight:600;flex:1}
+.titel button{all:unset;cursor:pointer;display:block}
+.titel button:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.merken{all:unset;cursor:pointer;font-size:19px;line-height:1;color:var(--linie);padding:2px 4px}
+.merken[aria-pressed=true]{color:#c99a2e}
+.merken:focus-visible{outline:2px solid var(--signal)}
+.meta{color:var(--leise);font-size:14px;margin:5px 0 0}
+.meta b{font-weight:600;color:var(--tinte)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0 0}
+.chip{font-size:12.5px;padding:2px 7px;border:1px solid var(--linie);border-radius:var(--radius);
+  color:var(--leise);background:transparent}
+.chip.cpv{border-color:var(--signal);color:var(--signal)}
+.chip.neu{border-color:var(--neu);color:var(--neu);font-weight:600}
+.chip.grenz{border-style:dashed;color:var(--leise)}
+li.grenzfall .titel{color:#3d4b46;font-weight:500}
+.balken{margin-top:10px;height:2px;background:var(--linie-fein);position:relative;max-width:190px}
+.balken i{position:absolute;inset:0 auto 0 0;background:var(--signal)}
+.detail{display:none;margin:12px 0 2px;padding-left:12px;border-left:2px solid var(--linie-fein)}
+li.offen .detail{display:block}
+.detail p{margin:0 0 9px;max-width:66ch;color:#33423d}
+.detail a{color:var(--signal)}
+.detail .wertung{font-size:13.5px;color:var(--leise);font-variant-numeric:tabular-nums}
+.leer{padding:60px 8px;text-align:center;color:var(--leise)}
+.leer strong{display:block;font-family:var(--serif);font-size:20px;color:var(--tinte);margin-bottom:6px}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--linie);
+  color:var(--leise);font-size:13.5px}
+footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px solid var(--linie);
+  background:var(--flaeche);border-radius:var(--radius);cursor:pointer;color:var(--tinte)}
+
+@media (max-width:640px){
+  h1{font-size:27px}
+  li.eintrag{grid-template-columns:56px 1fr;gap:0 12px}
+  .frist{padding-left:8px}
+  .frist .zahl{font-size:21px}
+  .inhalt{padding-right:10px}
+  .zaehler{margin-left:0;width:100%}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<form id="tor" autocomplete="on">
+  <h1>Ausschreibungs-Radar</h1>
+  <input type="text" name="username" value="radar" autocomplete="username" hidden>
+  <label for="passwort">Passwort</label>
+  <input type="password" id="passwort" autocomplete="current-password" required autofocus>
+  <label class="merk"><input type="checkbox" id="merken"> Auf diesem Gerät angemeldet bleiben</label>
+  <button type="submit" id="los">Öffnen</button>
+  <p class="fehler" id="fehler" role="alert"></p>
+</form>
+
+<div class="wrap" id="app">
+<header>
+  <div class="titelblock">
+    <h1>Ausschreibungs-Radar</h1>
+    <p class="stand" id="stand"></p>
+    <div id="banner"></div>
+  </div>
+  <button class="abmelden" id="abmelden" type="button">Abmelden</button>
+</header>
+
+<div class="leiste">
+  <input type="search" id="suche" placeholder="Im Titel, Text und Auftraggeber suchen" aria-label="Suchen">
+  <select id="quelle" aria-label="Quelle"></select>
+  <select id="sortierung" aria-label="Sortierung">
+    <option value="frist">Nach Frist</option>
+    <option value="punkte">Nach Passung</option>
+    <option value="datum">Nach Veröffentlichung</option>
+  </select>
+  <div class="schalter">
+    <button id="f-neu" aria-pressed="false">Nur neu</button>
+    <button id="f-merk" aria-pressed="false">Merkliste</button>
+    <button id="f-alt" aria-pressed="true">Abgelaufene aus</button>
+    <button id="f-grenz" aria-pressed="false">Grenzfälle</button>
+  </div>
+  <span class="zaehler" id="zaehler"></span>
+</div>
+
+<ol id="liste"></ol>
+
+<footer>
+  <p>Die Merkliste liegt nur in diesem Browser. Die Daten werden automatisch an jedem Werktag aktualisiert.</p>
+  <button id="export">Merkliste in die Zwischenablage</button>
+  <span id="exportinfo"></span>
+</footer>
+</div>
+
+<script>
+const PAKET = __PAKET__;
+const SPEICHER_PW = "radar_pw";
+
+function speicherLesen(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function speicherSchreiben(k, v){ try { v === null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(e){} }
+function b64(s){ return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+
+async function entschluesseln(passwort){
+  if(PAKET.klartext) return new TextDecoder().decode(b64(PAKET.klartext));
+  const basis = await crypto.subtle.importKey("raw", new TextEncoder().encode(passwort),
+    "PBKDF2", false, ["deriveKey"]);
+  const schluessel = await crypto.subtle.deriveKey(
+    {name:"PBKDF2", salt:b64(PAKET.salz), iterations:PAKET.runden, hash:"SHA-256"},
+    basis, {name:"AES-GCM", length:256}, false, ["decrypt"]);
+  const klar = await crypto.subtle.decrypt({name:"AES-GCM", iv:b64(PAKET.iv)}, schluessel, b64(PAKET.daten));
+  return new TextDecoder().decode(klar);
+}
+
+async function oeffnen(passwort, merken){
+  const knopf = document.getElementById("los");
+  const fehler = document.getElementById("fehler");
+  knopf.disabled = true; fehler.textContent = "";
+  try {
+    const daten = JSON.parse(await entschluesseln(passwort));
+    if(merken) speicherSchreiben(SPEICHER_PW, passwort);
+    document.getElementById("tor").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    starten(daten);
+  } catch(e){
+    speicherSchreiben(SPEICHER_PW, null);
+    fehler.textContent = "Passwort falsch.";
+    knopf.disabled = false;
+  }
+}
+
+document.getElementById("tor").addEventListener("submit", e => {
+  e.preventDefault();
+  oeffnen(document.getElementById("passwort").value, document.getElementById("merken").checked);
+});
+document.getElementById("abmelden").addEventListener("click", () => {
+  speicherSchreiben(SPEICHER_PW, null);
+  location.reload();
+});
+if(PAKET.klartext) oeffnen("", false);
+else { const gemerktesPw = speicherLesen(SPEICHER_PW); if(gemerktesPw) oeffnen(gemerktesPw, false); }
+
+function starten(D){
+  const DATEN = D.eintraege, QUELLEN = D.quellen;
+  const HEUTE = new Date(D.heute + "T00:00:00");
+  document.getElementById("stand").textContent = "Stand " + D.stand;
+  if(D.demo) document.getElementById("banner").innerHTML =
+    '<p class="demo">Beispieldaten. Diese Bekanntmachungen sind erfunden und zeigen nur die Oberfläche.</p>';
+
+  let gemerkt = new Set();
+  try { gemerkt = new Set(JSON.parse(speicherLesen("radar_merk") || "[]")); } catch (e) {}
+  function merkSpeichern(){ speicherSchreiben("radar_merk", JSON.stringify([...gemerkt])); }
+
+  const state = { suche:"", quelle:"", sort:"frist", neu:false, merk:false, altAus:true, grenz:false };
+  const offen = new Set();
+
+  function tageBis(iso){
+    if(!iso) return null;
+    const d = new Date(iso + "T00:00:00");
+    if(isNaN(d)) return null;
+    return Math.round((d - HEUTE) / 86400000);
+  }
+  function esc(s){ const p = document.createElement("span"); p.textContent = s == null ? "" : s; return p.innerHTML; }
+  function sichereUrl(u){ return /^https?:\/\//i.test(u || "") ? u : ""; }
+  function datumDe(iso){ if(!iso) return ""; const [j,m,t] = iso.split("-"); return t + "." + m + "." + j; }
+
+  const selQuelle = document.getElementById("quelle");
+  selQuelle.innerHTML = '<option value="">Alle Quellen</option>' +
+    QUELLEN.map(q => '<option value="' + esc(q) + '">' + esc(q) + '</option>').join("");
+  const maxPunkte = Math.max(30, ...DATEN.map(n => n.punkte || 0));
+
+  function gefiltert(){
+    const s = state.suche.toLowerCase().trim();
+    let out = DATEN.filter(n => {
+      if(state.quelle && n.quelle !== state.quelle) return false;
+      if(state.neu && !n.neu) return false;
+      if(state.merk && !gemerkt.has(n.id)) return false;
+      if(!state.grenz && n.grenzfall) return false;
+      const t = tageBis(n.frist);
+      if(state.altAus && t !== null && t < 0) return false;
+      if(s){
+        const heu = (n.titel + " " + n.beschreibung + " " + n.auftraggeber + " " + n.ort).toLowerCase();
+        if(!heu.includes(s)) return false;
+      }
+      return true;
+    });
+    out.sort((a,b) => {
+      if(state.sort === "punkte") return (b.punkte||0) - (a.punkte||0);
+      if(state.sort === "datum") return (b.veroeffentlicht||"").localeCompare(a.veroeffentlicht||"");
+      const ta = tageBis(a.frist), tb = tageBis(b.frist);
+      if(ta === null && tb === null) return (b.punkte||0) - (a.punkte||0);
+      if(ta === null) return 1;
+      if(tb === null) return -1;
+      return ta - tb;
+    });
+    return out;
+  }
+
+  function zeichnen(){
+    const liste = document.getElementById("liste");
+    const eintraege = gefiltert();
+    const sicher = DATEN.filter(n => !n.grenzfall).length;
+    document.getElementById("zaehler").textContent = eintraege.length + " sichtbar, " +
+      sicher + " Treffer und " + (DATEN.length - sicher) + " Grenzfälle im Bestand";
+    if(!eintraege.length){
+      liste.innerHTML = '<li class="leer"><strong>Nichts im Filter</strong>Suche oder Filter zurücksetzen.</li>';
+      return;
+    }
+    liste.innerHTML = eintraege.map(n => {
+      const t = tageBis(n.frist);
+      let klasse = "";
+      if(t !== null){ if(t < 0) klasse = "weg"; else if(t <= 7) klasse = "knapp"; else if(t <= 21) klasse = "bald"; }
+      if(offen.has(n.id)) klasse += " offen";
+      if(n.grenzfall) klasse += " grenzfall";
+      const zahl = t === null ? "–" : Math.abs(t);
+      const einheit = t === null ? "keine Frist" : (t < 0 ? "Tage vorbei" : (t === 1 ? "Tag übrig" : "Tage übrig"));
+      const w = n.wertung || {};
+      const chips = []
+        .concat(n.grenzfall ? ['<span class="chip grenz">Grenzfall' + (w.regel ? ': ' + esc(w.regel) : '') + '</span>'] : [])
+        .concat(n.neu ? ['<span class="chip neu">neu</span>'] : [])
+        .concat((n.cpv_treffer||[]).map(c => '<span class="chip cpv">' + esc(c) + '</span>'))
+        .concat((n.treffer||[]).slice(0,5).map(c => '<span class="chip">' + esc(c) + '</span>'))
+        .join("");
+      const meta = [n.auftraggeber ? "<b>" + esc(n.auftraggeber) + "</b>" : "", esc(n.ort), esc(n.art),
+                    esc(n.quelle) + (n.auch_in && n.auch_in.length ? " (auch " + esc(n.auch_in.join(", ")) + ")" : ""),
+                    n.frist ? esc(n.frist_art || "Angebotsfrist") + " " + datumDe(n.frist) : ""]
+                   .filter(Boolean).join(", ");
+      const breite = Math.min(100, Math.round(100 * (n.punkte||0) / maxPunkte));
+      const abzug = (w.abzug||0) + (w.cpv_abzug||0);
+      const url = sichereUrl(n.url);
+      return '<li class="eintrag ' + klasse + '">' +
+        '<div class="frist"><span class="zahl">' + zahl + '</span><span class="einheit">' + einheit + '</span></div>' +
+        '<div class="inhalt"><div class="kopf">' +
+          '<h2 class="titel"><button type="button" data-auf="' + esc(n.id) + '">' + esc(n.titel) + '</button></h2>' +
+          '<button class="merken" data-merk="' + esc(n.id) + '" aria-pressed="' + gemerkt.has(n.id) + '" title="Merken" aria-label="Merken">' +
+            (gemerkt.has(n.id) ? "★" : "☆") + '</button>' +
+        '</div>' +
+        '<p class="meta">' + meta + '</p>' +
+        (chips ? '<div class="chips">' + chips + '</div>' : '') +
+        '<div class="balken" title="Passung ' + (n.punkte||0) + ' Punkte"><i style="width:' + breite + '%"></i></div>' +
+        '<div class="detail">' +
+          (n.beschreibung ? '<p>' + esc(n.beschreibung) + '</p>' : '<p>Keine Beschreibung im Datensatz.</p>') +
+          (n.cpv && n.cpv.length ? '<p>CPV: ' + esc(n.cpv.join(", ")) + '</p>' : '') +
+          '<p class="wertung">Passung ' + (n.punkte||0) + ': Leistung ' + (w.leistung||0) + ', Thema ' + (w.thema||0) +
+            ', Kontext ' + (w.kontext||0) + (w.cpv ? ', CPV ' + w.cpv : '') +
+            (abzug ? ', Abzug ' + abzug + (w.abzug_grund ? ' (' + esc(w.abzug_grund) + ')' : '') : '') + '</p>' +
+          (url ? '<p><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Bekanntmachung öffnen</a></p>' : '') +
+        '</div></div></li>';
+    }).join("");
+  }
+
+  document.getElementById("liste").addEventListener("click", e => {
+    const auf = e.target.closest("[data-auf]");
+    if(auf){ const id = auf.dataset.auf; offen.has(id) ? offen.delete(id) : offen.add(id); zeichnen(); return; }
+    const merk = e.target.closest("[data-merk]");
+    if(merk){ const id = merk.dataset.merk; gemerkt.has(id) ? gemerkt.delete(id) : gemerkt.add(id); merkSpeichern(); zeichnen(); }
+  });
+  document.getElementById("suche").addEventListener("input", e => { state.suche = e.target.value; zeichnen(); });
+  document.getElementById("quelle").addEventListener("change", e => { state.quelle = e.target.value; zeichnen(); });
+  document.getElementById("sortierung").addEventListener("change", e => { state.sort = e.target.value; zeichnen(); });
+  function umschalten(id, schluessel){
+    const b = document.getElementById(id);
+    b.addEventListener("click", () => { state[schluessel] = !state[schluessel]; b.setAttribute("aria-pressed", state[schluessel]); zeichnen(); });
+  }
+  umschalten("f-neu", "neu"); umschalten("f-merk", "merk"); umschalten("f-alt", "altAus"); umschalten("f-grenz", "grenz");
+
+  document.getElementById("export").addEventListener("click", async () => {
+    const zeilen = DATEN.filter(n => gemerkt.has(n.id)).map(n =>
+      n.titel + "\n  " + (n.auftraggeber || "") + (n.frist ? " — Frist " + datumDe(n.frist) : "") + "\n  " + (n.url || ""));
+    const text = zeilen.length ? zeilen.join("\n\n") : "Merkliste ist leer.";
+    const info = document.getElementById("exportinfo");
+    try { await navigator.clipboard.writeText(text); info.textContent = " Kopiert."; }
+    catch(e){ info.textContent = " Kopieren nicht möglich."; }
+    setTimeout(() => info.textContent = "", 4000);
+  });
+  zeichnen();
+}
+</script>
+</body>
+</html>
