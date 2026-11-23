@@ -1,0 +1,36 @@
+{
+  "_hinweis": "Neutrales Beispielprofil aus einem fachfremden Bereich. Das echte Profil gehoert NICHT hierher, sondern in das GitHub-Secret RADAR_PROFIL. Aufbau siehe PROFIL.md.",
+  "mindestpunkte": 8,
+  "speicher_mindestpunkte": 4,
+  "leistung_stark": {
+    "lichtplanung": 9, "umruestung": 8, "wartung": 6, "instandhaltung": 6
+  },
+  "leistung_schwach": {
+    "konzept": 4, "monitoring": 4, "controlling": 3
+  },
+  "thema_kern": {
+    "strassenbeleuchtung": 10, "beleuchtung": 7, "leuchten": 6, "lichtsignalanlage": 8
+  },
+  "thema_erweitert": {
+    "energieeffizienz": 4, "insektenfreundlich": 4
+  },
+  "kontext": ["kommunal", "stadt", "gemeinde", "oeffentlich"],
+  "abzug": {
+    "innenbeleuchtung": -10, "buehnentechnik": -12
+  },
+  "falsche_freunde": {
+    "wartung": ["wartungsvertrag kfz"]
+  },
+  "ausschluss_titel": ["lieferung von", "fahrzeug"],
+  "cpv_bonus": {
+    "34993000": ["Straßenbeleuchtung", 10],
+    "71314300": ["Energieeffizienzberatung", 6]
+  },
+  "cpv_abzug": {
+    "45": ["Bauleistungen", -20]
+  },
+  "cpv_leistung": ["713143"],
+  "cpv_thema": ["34993"],
+  "ted_laender": ["DEU"],
+  "ted_volltext": ["Straßenbeleuchtung", "Lichtplanung"]
+}
