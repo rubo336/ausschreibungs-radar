@@ -49,6 +49,8 @@ GRUNDEINSTELLUNGEN = {
         "ted": {
             "aktiv": True,
             "name": "TED (EU-weit)",
+            "info": "Amtsblatt der EU für Ausschreibungen oberhalb der EU-Schwellenwerte. Abgefragt werden Bekanntmachungen aus Deutschland zu den Suchbegriffen des Profils.",
+            "aktualitaet": "bei jedem Lauf, bis einschließlich Vortag",
             "endpoint": "https://api.ted.europa.eu/v3/notices/search",
             "limit": 250,       # je Seite
             "max_seiten": 20,   # hoechstens 5000 Bekanntmachungen je Lauf
@@ -56,6 +58,8 @@ GRUNDEINSTELLUNGEN = {
         "doe": {
             "aktiv": True,
             "name": "Datenservice Öffentlicher Einkauf",
+            "info": "Bekanntmachungsservice von Bund, Ländern und Kommunen, auch unterhalb der EU-Schwellenwerte. Wichtigste Quelle: Viele Landes- und Kommunalplattformen leiten hierhin weiter.",
+            "aktualitaet": "Tagespakete, jeweils bis einschließlich Vortag",
             # Bulk-Download, ein ZIP je Tag, eine Datei je Bekanntmachung.
             "endpoint": "https://oeffentlichevergabe.de/api/notice-exports",
             "format": "ocds.zip",
@@ -64,6 +68,9 @@ GRUNDEINSTELLUNGEN = {
             "fristen_aus_eforms": True,
         },
         "cosinex": {
+            "name": "cosinex-Vergabemarktplätze",
+            "info": "Vergabeplattformen mit offener Schnittstelle, derzeit die Plattformen von Vergabe.NRW. Nur nationale Ausschreibungen, EU-weite kommen schon über die anderen Quellen.",
+            "aktualitaet": "Tagesstand der Plattform vom Vorabend",
             "aktiv": True,
             # Open-Data-Schnittstelle der cosinex-Vergabemarktplaetze.
             "nur_national": True,       # EU-weite kommen schon ueber TED und Datenservice
@@ -90,6 +97,8 @@ GRUNDEINSTELLUNGEN = {
             "liste": [
                 {
                     "name": "Vergabeplattform Berlin",
+                    "info": "RSS-Feed der Berliner Vergabeplattform.",
+                    "aktualitaet": "bei jedem Lauf, die jeweils 50 neuesten Einträge",
                     "url": "https://www.berlin.de/vergabeplattform/veroeffentlichungen/"
                            "bekanntmachungen/feed.rss",
                     "cpv_aus_titel": True,
@@ -104,6 +113,8 @@ GRUNDEINSTELLUNGEN = {
                 {
                     # Forschungs- und Innovationsfoerderung des Bundes (alle Ministerien)
                     "name": "Förderberatung des Bundes",
+                    "info": "Förderbekanntmachungen der Bundesministerien zur Forschungs- und Innovationsförderung.",
+                    "aktualitaet": "bei jedem Lauf, die jeweils neuesten Aufrufe",
                     "url": "https://www.foerderinfo.bund.de/foerderinfo/de/services/rss/"
                            "bekanntmachungen-alle/rssnewsfeed.xml",
                     "zeitraum_im_titel": True,
@@ -1254,8 +1265,26 @@ def demo_daten(profil):
 # Seite erzeugen
 # --------------------------------------------------------------------------
 
-def seite_schreiben(eintraege, pfad, passwort, demo=False, klartext=False, mindestpunkte=None):
+def quellen_info(cfg, anzahl=None):
+    """Beschreibung der aktiven Quellen fuer die Hilfe auf der Seite (landet verschluesselt in der Seite)."""
+    aus = []
+    for schluessel, q in cfg["quellen"].items():
+        if not q.get("aktiv"):
+            continue
+        eintraege = q.get("liste") if schluessel == "feeds" else [q]
+        for e in eintraege:
+            aus.append({"name": e.get("name", schluessel), "info": e.get("info", ""),
+                        "aktualitaet": e.get("aktualitaet", ""),
+                        "anzahl": (anzahl or {}).get(e.get("name", schluessel))})
+    return aus
+
+
+def seite_schreiben(eintraege, pfad, passwort, demo=False, klartext=False, mindestpunkte=None,
+                   quellen_info=None):
     nutzdaten = {
+        "quellen_info": quellen_info or [],
+        "zeitfenster_tage": GRUNDEINSTELLUNGEN["zeitfenster_tage"],
+        "aufbewahrung_tage": GRUNDEINSTELLUNGEN["aufbewahrung_tage"],
         "eintraege": eintraege,
         "mindestpunkte": mindestpunkte,
         "stand": dt.datetime.now().strftime("%d.%m.%Y, %H:%M Uhr"),
@@ -1292,7 +1321,8 @@ def lauf(args):
 
     if args.demo:
         seite_schreiben(demo_daten(profil), args.ausgabe, passwort, demo=True,
-                        klartext=args.klartext, mindestpunkte=profil.get("mindestpunkte"))
+                        klartext=args.klartext, mindestpunkte=profil.get("mindestpunkte"),
+                        quellen_info=quellen_info(cfg))
         print("Beispielseite geschrieben.")
         return
 
@@ -1300,7 +1330,7 @@ def lauf(args):
     tage = args.tage or cfg["zeitfenster_tage"]
     seit = dt.date.today() - dt.timedelta(days=tage)
 
-    roh = []
+    roh, anzahl = [], {}
     for schluessel, holen in (("ted", hole_ted), ("doe", hole_doe),
                               ("cosinex", hole_cosinex), ("feeds", hole_feeds)):
         q = cfg["quellen"][schluessel]
@@ -1314,6 +1344,11 @@ def lauf(args):
             geholt = []
         print("  -> %d" % len(geholt))
         roh += geholt
+        if schluessel == "feeds":
+            for f in q.get("liste", []):
+                anzahl[f["name"]] = sum(1 for n in geholt if n.get("quelle") == f["name"])
+        else:
+            anzahl[q.get("name", schluessel)] = len(geholt)
     doe_pakete_aufraeumen(daten, seit - dt.timedelta(days=2))
     print("%d Bekanntmachungen abgerufen." % len(roh))
 
@@ -1368,7 +1403,7 @@ def lauf(args):
                                                               vorher, entfernt))
     print("%d Treffer, %d Grenzfaelle." % (len(anzeige) - grenzfaelle, grenzfaelle))
     seite_schreiben(anzeige, args.ausgabe, passwort, klartext=args.klartext,
-                    mindestpunkte=schwelle_anzeige)
+                    mindestpunkte=schwelle_anzeige, quellen_info=quellen_info(cfg, anzahl))
     print("Seite geschrieben.")
 
 

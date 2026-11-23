@@ -100,7 +100,14 @@ li.grenzfall .titel{color:#3d4b46;font-weight:500}
 .aufklapp::before{content:"▸ ";display:inline-block;transition:transform .15s}
 li.offen .aufklapp::before{content:"▾ "}
 .titel button:hover{text-decoration:underline;text-decoration-color:var(--linie);text-underline-offset:3px}
-.legende{margin:14px 0 0;font-size:14px;color:#33423d}
+.hilfen{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+.hilfen details[open]{flex-basis:100%;order:2}
+.legende{font-size:14px;color:#33423d}
+.faq h3{font-family:var(--serif);font-size:16px;margin:16px 0 4px}
+.faq h3:first-child{margin-top:4px}
+.faq ul{margin:6px 0;padding-left:20px}
+.faq li{margin:4px 0}
+.faq .klein{color:var(--leise);font-size:13px}
 .legende summary{cursor:pointer;color:var(--signal);display:inline-flex;align-items:center;gap:6px;
   list-style:none;padding:5px 12px 5px 10px;border:1px solid var(--signal);border-radius:var(--radius);
   background:var(--flaeche);font-size:14px;user-select:none}
@@ -165,6 +172,7 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
     <h1>Ausschreibungs-Radar</h1>
     <p class="stand" id="stand"></p>
     <div id="banner"></div>
+    <div class="hilfen">
     <details class="legende">
       <summary>Wie entsteht die Passung? <span class="hinweis hinweis-zu">· zum Aufklappen klicken</span><span class="hinweis hinweis-auf">· zuklappen</span></summary>
       <div class="inhalt-legende">
@@ -184,6 +192,60 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
           <b>Grenzfall</b>; diese erscheinen nur, wenn oben „Grenzfälle“ eingeschaltet ist.</p>
       </div>
     </details>
+    <details class="legende faq">
+      <summary>Hilfe und Fragen <span class="hinweis hinweis-zu">· zum Aufklappen klicken</span><span class="hinweis hinweis-auf">· zuklappen</span></summary>
+      <div class="inhalt-legende">
+        <h3>Was macht der Radar?</h3>
+        <p>Er sammelt an jedem Werktag öffentliche Ausschreibungen und Förderaufrufe aus mehreren Quellen,
+          bewertet sie anhand eines Suchprofils und zeigt hier die passenden. Bewerben oder Unterlagen abrufen
+          muss man weiterhin auf der Plattform der jeweiligen Bekanntmachung („Bekanntmachung öffnen“ in den Details).</p>
+
+        <h3>Welche Datenquellen werden durchsucht?</h3>
+        <ul id="faq-quellen"></ul>
+        <p class="klein">Die Zahl in Klammern gibt an, wie viele Bekanntmachungen beim letzten Lauf aus der Quelle geprüft wurden.</p>
+
+        <h3>Wann wird aktualisiert?</h3>
+        <p>Automatisch an jedem Werktag am frühen Morgen. Wann die angezeigten Daten erzeugt wurden, steht oben unter
+          der Überschrift („Stand“). Die meisten Quellen liefern dabei den Stand bis einschließlich Vortag; was heute
+          veröffentlicht wird, erscheint also in der Regel morgen.</p>
+
+        <h3>Was bedeutet „neu“?</h3>
+        <p>Der Eintrag ist beim letzten Lauf zum ersten Mal aufgetaucht. Montags umfasst das auch, was über das
+          Wochenende veröffentlicht wurde. Mit dem Schalter „Nur neu“ sieht man ausschließlich diese Einträge.</p>
+
+        <h3>Was bedeutet die Zahl links?</h3>
+        <p>Die Tage bis zum Ende der Angebots- oder Teilnahmefrist. Rot heißt höchstens 7 Tage, gelb höchstens 21 Tage,
+          „!“ heißt: Die Frist endet heute. Steht dort „keine Frist“, enthielt der Datensatz keine; dann bitte in der
+          Bekanntmachung selbst nachsehen. Abgelaufene Einträge sind ausgeblendet, solange „Abgelaufene aus“ aktiv ist.</p>
+
+        <h3>Wie weit reicht der Radar zurück, und wie lange bleiben Einträge?</h3>
+        <p>Bei jedem Lauf werden die Veröffentlichungen der letzten <span id="faq-zeitfenster">21</span> Tage geprüft.
+          Einmal gefundene Einträge bleiben erhalten, bis ihre Frist mehr als <span id="faq-aufbewahrung">60</span> Tage
+          zurückliegt; Einträge ohne Frist, bis sie so lange in keiner Quelle mehr auftauchen.</p>
+
+        <h3>Was heißt „auch …“ hinter der Quelle?</h3>
+        <p>Dieselbe Ausschreibung stand in mehreren Quellen. Sie wird nur einmal gezeigt, mit den vollständigsten Angaben.</p>
+
+        <h3>Wie funktioniert die Merkliste?</h3>
+        <p>Der Stern merkt einen Eintrag vor. Die Merkliste wird nur in diesem Browser auf diesem Gerät gespeichert und
+          ist für andere nicht sichtbar. Mit „Merkliste in die Zwischenablage“ unten auf der Seite lässt sie sich
+          kopieren, etwa um sie per Mail zu teilen.</p>
+
+        <h3>Was findet der Radar nicht?</h3>
+        <ul>
+          <li>Direktaufträge und Verhandlungsvergaben ohne öffentliche Bekanntmachung; dafür gibt es keine Veröffentlichung, die man finden könnte.</li>
+          <li>Ausschreibungen, die nur auf Plattformen ohne offene Schnittstelle oder nur auf Webseiten einzelner Auftraggeber stehen.</li>
+          <li>Ausschreibungen, deren Text die Suchbegriffe nicht enthält. Wenn etwas fehlt oder etwas Unpassendes auftaucht,
+            hilft eine kurze Rückmeldung an die Person, die den Radar betreut; dann lässt sich das Suchprofil anpassen.</li>
+        </ul>
+
+        <h3>Sind die Daten geschützt?</h3>
+        <p>Die Seite ist verschlüsselt und lässt sich nur mit dem Passwort öffnen; entschlüsselt wird ausschließlich in
+          diesem Browser. „Angemeldet bleiben“ speichert das Passwort auf dem Gerät und sollte auf gemeinsam genutzten
+          Rechnern nicht gesetzt werden. „Abmelden“ oben rechts löscht es wieder.</p>
+      </div>
+    </details>
+    </div>
   </div>
   <button class="abmelden" id="abmelden" type="button">Abmelden</button>
 </header>
@@ -266,6 +328,13 @@ function starten(D){
   const HEUTE = new Date(D.heute + "T00:00:00");
   document.getElementById("stand").textContent = "Stand " + D.stand;
   if(D.mindestpunkte) document.getElementById("schwelle").textContent = D.mindestpunkte;
+  if(D.zeitfenster_tage) document.getElementById("faq-zeitfenster").textContent = D.zeitfenster_tage;
+  if(D.aufbewahrung_tage) document.getElementById("faq-aufbewahrung").textContent = D.aufbewahrung_tage;
+  const zahlDe = z => Number(z).toLocaleString("de-DE");
+  document.getElementById("faq-quellen").innerHTML = (D.quellen_info || []).map(q =>
+    "<li><b>" + esc(q.name) + "</b>" + (q.anzahl != null ? " (" + zahlDe(q.anzahl) + ")" : "") +
+    (q.info ? ": " + esc(q.info) : "") + (q.aktualitaet ? " <span class=\"klein\">Aktualität: " + esc(q.aktualitaet) + "</span>" : "") +
+    "</li>").join("") || "<li>Keine Angaben.</li>";
   if(D.demo) document.getElementById("banner").innerHTML =
     '<p class="demo">Beispieldaten. Diese Bekanntmachungen sind erfunden und zeigen nur die Oberfläche.</p>';
 
