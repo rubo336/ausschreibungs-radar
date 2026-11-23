@@ -1,0 +1,71 @@
+# --- Suchprofile und Konfiguration (nur per Secret/Umgebungsvariable) ---
+profil*.json
+profil*.yaml
+profil*.yml
+profil*.toml
+profile*.json
+profile*.yaml
+profile*.yml
+profile*.toml
+config*.json
+config*.yaml
+config*.yml
+config*.toml
+config*.ini
+*.local.*
+/profile/
+/profil/
+/config/
+!beispielprofil*.json
+
+# --- Umgebungsvariablen und Geheimnisse ---
+.env
+.env.*
+*.env
+secrets*
+*.key
+*.pem
+
+# --- Zwischenspeicher ---
+cache/
+.cache/
+*.cache
+__pycache__/
+*.py[cod]
+
+# --- Bestandsdaten (bereits gesehene Ausschreibungen usw.) ---
+daten/
+data/
+state/
+bestand*
+*.db
+*.sqlite
+*.sqlite3
+*.csv
+*.jsonl
+
+# --- Erzeugte Ergebnisse ---
+ausgabe/
+output/
+public/
+site/
+_site/
+dist/
+build/
+*.html
+
+# --- Logs ---
+logs/
+*.log
+
+# --- Editor und Betriebssystem ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+.venv/
+venv/
+
+# --- Lokale Claude-Einstellungen ---
+.claude/settings.local.json
