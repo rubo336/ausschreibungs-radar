@@ -614,8 +614,20 @@ def eforms_auswerten(inhalt, dateiname, quellenname):
         "veroeffentlicht": dt.date.today().isoformat(),
         "frist": frist.isoformat() if frist else "", "frist_art": frist_art,
         "art": "", "quelle": quellenname,
-        "url": "https://oeffentlichevergabe.de/ui/de/suche?query=" + urllib.parse.quote(kennung),
+        "url": doe_link(kennung),
     }
+
+
+def doe_link(datei):
+    """Direktlink auf die Bekanntmachung im Datenservice. Der Dateiname im Tagespaket
+    ist <Bekanntmachungs-ID>-<Version>, z. B. 26059342-1."""
+    if not datei:
+        return ""
+    kennung, _, version = str(datei).rpartition("-")
+    if not kennung or not version.isdigit():
+        kennung, version = str(datei), ""
+    url = "https://oeffentlichevergabe.de/ui/de/search/details?noticeId=" + urllib.parse.quote(kennung)
+    return url + ("&noticeVersion=" + version if version else "")
 
 
 def _ocds_kaeuferadresse(r):
@@ -687,6 +699,7 @@ def doe_aus_ocds(paket, dateiname, quellenname, tag):
         if not NUTS_MUSTER.match(region):
             region = _nuts_suchen(r)
         kennung = r.get("ocid") or r.get("id") or os.path.basename(dateiname)
+        datei = os.path.splitext(os.path.basename(dateiname))[0]
         frist = _ocds_frist(tender)
         treffer.append({
             "id": "doe:" + str(kennung),
@@ -698,11 +711,12 @@ def doe_aus_ocds(paket, dateiname, quellenname, tag):
             "cpv": cpvs,
             "veroeffentlicht": (parse_date(r.get("date")) or tag).isoformat(),
             "frist": frist.isoformat() if frist else "",
-            "datei": os.path.splitext(os.path.basename(dateiname))[0],
+            "datei": datei,
             "paket_tag": tag.isoformat(),
             "art": tender.get("status") or "",
             "quelle": quellenname,
-            "url": link or "https://oeffentlichevergabe.de",
+            "url": link or doe_link(datei),
+            "url_datenservice": doe_link(datei),
         })
     return treffer
 
@@ -1373,6 +1387,10 @@ def lauf(args):
     # Alles im Bestand nach dem aktuellen Profil neu bewerten, damit Profilaenderungen
     # sofort auch fuer aeltere Funde gelten.
     for eintrag in bestand.values():
+        if eintrag.get("id", "").startswith("doe:") and eintrag.get("datei"):
+            eintrag["url_datenservice"] = doe_link(eintrag["datei"])
+            if eintrag.get("url", "").rstrip("/") in ("https://oeffentlichevergabe.de", ""):
+                eintrag["url"] = eintrag["url_datenservice"]
         eintrag["art"] = art_lesbar(eintrag.get("art"))
         eintrag["cpv"] = list(dict.fromkeys(eintrag.get("cpv") or []))
         neu = bewerte(dict(eintrag), profil)

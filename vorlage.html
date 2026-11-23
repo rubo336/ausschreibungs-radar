@@ -129,6 +129,8 @@ li.offen .aufklapp::before{content:"▾ "}
 li.offen .detail{display:block}
 .detail p{margin:0 0 9px;max-width:66ch;color:#33423d}
 .detail a{color:var(--signal)}
+.detail .klein{color:var(--leise);font-size:13px}
+.detail .links{line-height:1.8}
 .detail .wertung{font-size:13.5px;color:var(--leise);font-variant-numeric:tabular-nums}
 .leer{padding:60px 8px;text-align:center;color:var(--leise)}
 .leer strong{display:block;font-family:var(--serif);font-size:20px;color:var(--tinte);margin-bottom:6px}
@@ -222,6 +224,13 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
         <p>Bei jedem Lauf werden die Veröffentlichungen der letzten <span id="faq-zeitfenster">21</span> Tage geprüft.
           Einmal gefundene Einträge bleiben erhalten, bis ihre Frist mehr als <span id="faq-aufbewahrung">60</span> Tage
           zurückliegt; Einträge ohne Frist, bis sie so lange in keiner Quelle mehr auftauchen.</p>
+
+        <h3>Wohin führen die Links in den Details?</h3>
+        <p>„Zur Vergabeplattform“ führt zu der Plattform, die der Auftraggeber selbst für das Verfahren gewählt hat;
+          dort gibt es die Unterlagen und dort wird das Angebot abgegeben. Das kann evergabe-online.de sein, aber auch eine
+          andere Plattform, etwa ein Landesportal oder ein privater Anbieter. Manche verlangen eine (meist kostenlose)
+          Registrierung. „Im Datenservice des Bundes ansehen“ zeigt die amtliche Bekanntmachung beim Bekanntmachungsservice
+          des Bundes, kostenlos und ohne Anmeldung.</p>
 
         <h3>Was heißt „auch …“ hinter der Quelle?</h3>
         <p>Dieselbe Ausschreibung stand in mehreren Quellen. Sie wird nur einmal gezeigt, mit den vollständigsten Angaben.</p>
@@ -353,6 +362,18 @@ function starten(D){
   }
   function esc(s){ const p = document.createElement("span"); p.textContent = s == null ? "" : s; return p.innerHTML; }
   function sichereUrl(u){ return /^https?:\/\//i.test(u || "") ? u : ""; }
+  function plattform(u){ try { return new URL(u).hostname.replace(/^www\./, ""); } catch(e){ return ""; } }
+  function linkZeile(n){
+    const haupt = sichereUrl(n.url), ds = sichereUrl(n.url_datenservice);
+    const teile = [];
+    if(haupt && haupt !== ds)
+      teile.push('<a href="' + esc(haupt) + '" target="_blank" rel="noopener noreferrer">Zur Vergabeplattform</a> <span class="klein">(' + esc(plattform(haupt)) + ')</span>');
+    if(ds)
+      teile.push('<a href="' + esc(ds) + '" target="_blank" rel="noopener noreferrer">Im Datenservice des Bundes ansehen</a> <span class="klein">(kostenlos, ohne Anmeldung)</span>');
+    else if(haupt)
+      teile.push('<a href="' + esc(haupt) + '" target="_blank" rel="noopener noreferrer">Bekanntmachung öffnen</a> <span class="klein">(' + esc(plattform(haupt)) + ')</span>');
+    return teile.length ? '<p class="links">' + teile.join('<br>') + '</p>' : '';
+  }
   function datumDe(iso){ if(!iso) return ""; const [j,m,t] = iso.split("-"); return t + "." + m + "." + j; }
 
   const selQuelle = document.getElementById("quelle");
@@ -441,7 +462,7 @@ function starten(D){
           '<p class="wertung">Passung ' + (n.punkte||0) + ': Leistung ' + (w.leistung||0) + ', Thema ' + (w.thema||0) +
             ', Kontext ' + (w.kontext||0) + (w.cpv ? ', CPV ' + w.cpv : '') + (w.region ? ', Region ' + w.region : '') +
             (abzug ? ', Abzug ' + abzug + (w.abzug_grund ? ' (' + esc(w.abzug_grund) + ')' : '') : '') + '</p>' +
-          (url ? '<p><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Bekanntmachung öffnen</a></p>' : '') +
+          linkZeile(n) +
         '</div></div></li>';
     }).join("");
   }
