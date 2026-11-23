@@ -100,7 +100,16 @@ GRUNDEINSTELLUNGEN = {
                         "art": r"Verfahrensart:\s*([^\n]+)",
                         "veroeffentlicht": r"Online seit:\s*(\d{2}\.\d{2}\.\d{4})",
                     },
-                }
+                },
+                {
+                    # Forschungs- und Innovationsfoerderung des Bundes (alle Ministerien)
+                    "name": "Förderberatung des Bundes",
+                    "url": "https://www.foerderinfo.bund.de/foerderinfo/de/services/rss/"
+                           "bekanntmachungen-alle/rssnewsfeed.xml",
+                    "zeitraum_im_titel": True,
+                    "foerderaufruf": True,
+                    "art": "Förderaufruf",
+                },
             ],
         },
     },
@@ -123,6 +132,7 @@ PROFIL_STANDARD = {
     "cpv_leistung": [],
     "cpv_thema": [],
     "region_bonus": {},
+    "foerderaufruf_punkte": 6,
     "ted_laender": ["DEU"],
     "ted_volltext": [],
 }
@@ -924,6 +934,7 @@ def _feed_text(rohtext):
 
 
 CPV_IM_TITEL = re.compile(r"\s*(\d{8})(?:-\d)?\s*$")
+ZEITRAUM_IM_TITEL = re.compile(r"\s*\|\s*(\d{2}\.\d{2}\.\d{4})\s*-\s*(\d{2}\.\d{2}\.\d{4})\s*$")
 ATOM = "{http://www.w3.org/2005/Atom}"
 
 
@@ -967,6 +978,12 @@ def hole_feeds(cfg, profil, daten, seit):
                     cpvs.append(m.group(1))
                     titel = CPV_IM_TITEL.sub("", titel).strip()
             frist = parse_date(werte.get("frist") or werte.get("frist2"))
+            if feed.get("zeitraum_im_titel"):
+                # z. B. "Titel | 20.11.2026 - 06.01.2027": Ende des Zeitraums ist die Frist
+                m = ZEITRAUM_IM_TITEL.search(titel)
+                if m:
+                    frist = frist or parse_date(m.group(2))
+                    titel = ZEITRAUM_IM_TITEL.sub("", titel).strip()
             datum = (parse_date(werte.get("veroeffentlicht"))
                      or parse_date(feld("pubDate", "{http://purl.org/dc/elements/1.1/}date",
                                         ATOM + "updated"))
@@ -976,8 +993,10 @@ def hole_feeds(cfg, profil, daten, seit):
                 "titel": titel, "beschreibung": text[:1200],
                 "auftraggeber": werte.get("auftraggeber", ""), "ort": werte.get("ort", ""),
                 "cpv": cpvs, "veroeffentlicht": datum.isoformat(),
-                "frist": frist.isoformat() if frist else "", "art": werte.get("art", ""),
+                "frist": frist.isoformat() if frist else "",
+                "art": werte.get("art", "") or feed.get("art", ""),
                 "quelle": name, "url": link,
+                "foerderaufruf": bool(feed.get("foerderaufruf")),
             })
         print("  %-42s %5d" % (name, len(treffer) - vorher))
     return treffer
@@ -1143,6 +1162,10 @@ def bewerte(n, profil):
     if cpv_abzug and cpv_bonus:
         cpv_abzug /= 2
 
+    # Ein Foerderaufruf ist selbst die gesuchte Leistungsart (Forschung/Projekt);
+    # ob er passt, entscheidet dann das Thema.
+    if n.get("foerderaufruf"):
+        stark += profil.get("foerderaufruf_punkte", 6)
     leistung_stark = bool(stark) or cpv_leistung
     erweitert_gilt = bool(erweitert) and leistung_stark and bool(kontext)
     if not erweitert_gilt:

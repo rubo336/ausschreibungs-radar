@@ -88,6 +88,7 @@ li.weg{opacity:.62}
 .chip.neu{border-color:var(--neu);color:var(--neu);font-weight:600}
 .chip.grenz{border-style:dashed;color:var(--leise)}
 .chip.region{border-color:#8a6d1e;color:#8a6d1e}
+.chip.foerder{border-color:#6b4c8a;color:#6b4c8a;font-weight:600}
 li.grenzfall .titel{color:#3d4b46;font-weight:500}
 .balken{margin-top:10px;height:2px;background:var(--linie-fein);position:relative;max-width:190px}
 .balken i{position:absolute;inset:0 auto 0 0;background:var(--signal)}
@@ -165,6 +166,7 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
           <dt>Kontext</dt><dd>Wörter, die den passenden Blickwinkel anzeigen, je 2 Punkte, höchstens 6.</dd>
           <dt>CPV</dt><dd>Bonus für passende Leistungscodes, die der Auftraggeber vergeben hat (grünes Etikett).</dd>
           <dt>Region</dt><dd>Bonus für bevorzugte Regionen (braunes Etikett).</dd>
+          <dt>Förderaufruf</dt><dd>Förderbekanntmachungen gelten selbst als passende Leistung (violettes Etikett); ob sie erscheinen, entscheidet das Thema.</dd>
           <dt>Abzug</dt><dd>Minuspunkte für fachfremde Leistungen, etwa Bau, Technik oder Warenlieferungen.</dd>
         </dl>
         <p>Treffer im Titel zählen anderthalbfach. Als <b>Treffer</b> gilt ein Eintrag, der Leistung <i>und</i> Thema trifft und
@@ -327,6 +329,7 @@ function starten(D){
       const w = n.wertung || {};
       const chips = []
         .concat(n.grenzfall ? ['<span class="chip grenz">Grenzfall' + (w.regel ? ': ' + esc(w.regel) : '') + '</span>'] : [])
+        .concat(n.foerderaufruf ? ['<span class="chip foerder">Förderaufruf</span>'] : [])
         .concat(n.neu ? ['<span class="chip neu">neu</span>'] : [])
         .concat(w.region_name ? ['<span class="chip region">' + esc(w.region_name) + '</span>'] : [])
         .concat((n.cpv_treffer||[]).map(c => '<span class="chip cpv">' + esc(c) + '</span>'))
