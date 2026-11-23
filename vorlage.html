@@ -101,7 +101,17 @@ li.grenzfall .titel{color:#3d4b46;font-weight:500}
 li.offen .aufklapp::before{content:"▾ "}
 .titel button:hover{text-decoration:underline;text-decoration-color:var(--linie);text-underline-offset:3px}
 .legende{margin:14px 0 0;font-size:14px;color:#33423d}
-.legende summary{cursor:pointer;color:var(--signal);display:inline-block}
+.legende summary{cursor:pointer;color:var(--signal);display:inline-flex;align-items:center;gap:6px;
+  list-style:none;padding:5px 12px 5px 10px;border:1px solid var(--signal);border-radius:var(--radius);
+  background:var(--flaeche);font-size:14px;user-select:none}
+.legende summary::-webkit-details-marker{display:none}
+.legende summary::before{content:"▶";font-size:10px;line-height:1}
+.legende[open] summary::before{content:"▼"}
+.legende summary:hover{background:#eef3ee}
+.legende summary .hinweis{color:var(--leise);font-size:13px}
+.legende summary .hinweis-auf{display:none}
+.legende[open] summary .hinweis-zu{display:none}
+.legende[open] summary .hinweis-auf{display:inline}
 .legende .inhalt-legende{margin-top:10px;padding:12px 14px;background:var(--flaeche);
   border:1px solid var(--linie-fein);border-radius:var(--radius);max-width:820px}
 .legende dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:8px 0}
@@ -156,7 +166,7 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
     <p class="stand" id="stand"></p>
     <div id="banner"></div>
     <details class="legende">
-      <summary>Wie entsteht die Passung?</summary>
+      <summary>Wie entsteht die Passung? <span class="hinweis hinweis-zu">· zum Aufklappen klicken</span><span class="hinweis hinweis-auf">· zuklappen</span></summary>
       <div class="inhalt-legende">
         <p>Jede Bekanntmachung wird anhand des Suchprofils mit Punkten bewertet. Der Balken unter dem Titel zeigt die Punktzahl,
           die genaue Aufschlüsselung steht in den Details eines Eintrags.</p>
