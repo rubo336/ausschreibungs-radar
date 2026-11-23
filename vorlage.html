@@ -108,23 +108,56 @@ li.offen .aufklapp::before{content:"▾ "}
 .faq ul{margin:6px 0;padding-left:20px}
 .faq li{margin:4px 0}
 .faq .klein{color:var(--leise);font-size:13px}
-.legende summary{cursor:pointer;color:var(--signal);display:inline-flex;align-items:center;gap:6px;
+.legende > summary{cursor:pointer;color:var(--signal);display:inline-flex;align-items:center;gap:6px;
   list-style:none;padding:5px 12px 5px 10px;border:1px solid var(--signal);border-radius:var(--radius);
   background:var(--flaeche);font-size:14px;user-select:none}
-.legende summary::-webkit-details-marker{display:none}
-.legende summary::before{content:"▶";font-size:10px;line-height:1}
-.legende[open] summary::before{content:"▼"}
-.legende summary:hover{background:#eef3ee}
-.legende summary .hinweis{color:var(--leise);font-size:13px}
-.legende summary .hinweis-auf{display:none}
-.legende[open] summary .hinweis-zu{display:none}
-.legende[open] summary .hinweis-auf{display:inline}
+.legende > summary::-webkit-details-marker{display:none}
+.legende > summary::before{content:"▶";font-size:10px;line-height:1}
+.legende[open] > summary::before{content:"▼"}
+.legende > summary:hover{background:#eef3ee}
+.legende > summary .hinweis{color:var(--leise);font-size:13px}
+.legende > summary .hinweis-auf{display:none}
+.legende[open] > summary .hinweis-zu{display:none}
+.legende[open] > summary .hinweis-auf{display:inline}
 .legende .inhalt-legende{margin-top:10px;padding:12px 14px;background:var(--flaeche);
   border:1px solid var(--linie-fein);border-radius:var(--radius);max-width:820px}
 .legende dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:8px 0}
 .legende dt{font-weight:600}
 .legende dd{margin:0}
 .legende p{margin:6px 0}
+.editor .intro{max-width:70ch}
+.editor .werkzeuge{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.editor input[type=text],.editor input[type=number]{font-family:inherit;font-size:14px;padding:5px 8px;
+  border:1px solid var(--linie);border-radius:var(--radius);background:#fff;color:var(--tinte)}
+.editor input[type=number]{width:72px}
+.editor .knopf{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px solid var(--linie);
+  background:var(--flaeche);border-radius:var(--radius);cursor:pointer;color:var(--tinte)}
+.editor .knopf.haupt{background:var(--signal);border-color:var(--signal);color:#fff}
+.editor .knopf.klein{padding:3px 8px;font-size:13px}
+.editor details.abschnitt{border:1px solid var(--linie-fein);border-radius:var(--radius);margin:8px 0;background:#fff}
+.editor details.abschnitt>summary{cursor:pointer;padding:8px 12px;font-weight:600;list-style:none}
+.editor details.abschnitt>summary::-webkit-details-marker{display:none}
+.editor details.abschnitt>summary::before{content:"▶ ";font-size:10px;color:var(--signal)}
+.editor details.abschnitt[open]>summary::before{content:"▼ "}
+.editor details.abschnitt>summary .anz{font-weight:400;color:var(--leise);font-size:13px}
+.editor details.abschnitt>summary .geaendert{color:var(--dringend);font-weight:600;font-size:13px}
+.editor .abschnitt-inhalt{padding:0 12px 12px}
+.editor .abschnitt-inhalt>p{margin:0 0 8px;color:var(--leise);font-size:13.5px;max-width:75ch}
+.editor .zeilen{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:6px 14px}
+.editor .zeile{display:flex;gap:6px;align-items:center}
+.editor .zeile input[type=text]{flex:1;min-width:0}
+.editor .zeile .weg{all:unset;cursor:pointer;color:var(--leise);padding:2px 6px;font-size:15px}
+.editor .zeile .weg:hover{color:var(--dringend)}
+.editor .zeile.neu input{border-color:var(--signal)}
+.editor .zeile.versteckt{display:none}
+.editor .zahlen label{display:flex;gap:10px;align-items:center;margin:6px 0}
+.editor .zahlen label span{min-width:300px}
+.editor .ausgabe{width:100%;min-height:120px;font-family:ui-monospace,monospace;font-size:12.5px;margin-top:8px;
+  border:1px solid var(--linie);border-radius:var(--radius);padding:8px}
+.editor .aenderungen{white-space:pre-wrap;font-size:13.5px;background:#f6f8f5;border:1px solid var(--linie-fein);
+  border-radius:var(--radius);padding:10px 12px;margin-top:8px}
+.editor .meldung{font-size:13.5px;color:var(--signal)}
+@media (max-width:640px){ .editor .zahlen label{flex-wrap:wrap} .editor .zahlen label span{min-width:0} }
 .detail{display:none;margin:12px 0 2px;padding-left:12px;border-left:2px solid var(--linie-fein)}
 li.offen .detail{display:block}
 .detail p{margin:0 0 9px;max-width:66ch;color:#33423d}
@@ -232,6 +265,11 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
           Registrierung. „Im Datenservice des Bundes ansehen“ zeigt die amtliche Bekanntmachung beim Bekanntmachungsservice
           des Bundes, kostenlos und ohne Anmeldung.</p>
 
+        <h3>Wie lässt sich das Suchprofil ändern?</h3>
+        <p>Über „Suchprofil bearbeiten“ oben. Die Änderungen werden als Text kopiert und an die Person geschickt, die den
+          Radar betreut; sie spielt sie ein. Wirksam werden sie mit dem nächsten Lauf, und zwar auch für alle schon
+          gespeicherten Einträge.</p>
+
         <h3>Was heißt „auch …“ hinter der Quelle?</h3>
         <p>Dieselbe Ausschreibung stand in mehreren Quellen. Sie wird nur einmal gezeigt, mit den vollständigsten Angaben.</p>
 
@@ -252,6 +290,31 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
         <p>Die Seite ist verschlüsselt und lässt sich nur mit dem Passwort öffnen; entschlüsselt wird ausschließlich in
           diesem Browser. „Angemeldet bleiben“ speichert das Passwort auf dem Gerät und sollte auf gemeinsam genutzten
           Rechnern nicht gesetzt werden. „Abmelden“ oben rechts löscht es wieder.</p>
+      </div>
+    </details>
+    <details class="legende editor">
+      <summary>Suchprofil bearbeiten <span class="hinweis hinweis-zu">· zum Aufklappen klicken</span><span class="hinweis hinweis-auf">· zuklappen</span></summary>
+      <div class="inhalt-legende">
+        <p class="intro">Hier lässt sich das Suchprofil ändern, nach dem der Radar bewertet. So geht es:
+          <b>1.</b> Wörter und Punkte anpassen. <b>2.</b> Unten „Geändertes Profil kopieren“ wählen.
+          <b>3.</b> Den kopierten Text zusammen mit der Änderungsliste an die Person schicken, die den Radar betreut.
+          Wirksam wird die Änderung mit dem nächsten Lauf. Bis dahin bleibt der Entwurf in diesem Browser gespeichert.</p>
+        <p class="intro klein">Groß- und Kleinschreibung und Umlaute spielen keine Rolle. Ein Wort trifft auch als Teil eines längeren
+          Wortes („leuchte“ findet „Straßenleuchte“); Wörter mit höchstens fünf Buchstaben müssen am Wortanfang stehen.</p>
+        <div class="werkzeuge">
+          <input type="text" id="ed-filter" placeholder="Wort im Profil suchen" aria-label="Wort im Profil suchen">
+          <span class="meldung" id="ed-status"></span>
+        </div>
+        <div id="ed-abschnitte"></div>
+        <div class="werkzeuge">
+          <button type="button" class="knopf" id="ed-zeigen">Änderungen anzeigen</button>
+          <button type="button" class="knopf haupt" id="ed-kopieren">Geändertes Profil kopieren</button>
+          <button type="button" class="knopf" id="ed-datei">Als Datei speichern</button>
+          <button type="button" class="knopf" id="ed-verwerfen">Entwurf verwerfen</button>
+          <span class="meldung" id="ed-meldung"></span>
+        </div>
+        <div id="ed-aenderungen"></div>
+        <textarea class="ausgabe" id="ed-ausgabe" readonly hidden aria-label="Profil als Text"></textarea>
       </div>
     </details>
     </div>
@@ -332,6 +395,264 @@ document.getElementById("abmelden").addEventListener("click", () => {
 if(PAKET.klartext) oeffnen("", false);
 else { const gemerktesPw = speicherLesen(SPEICHER_PW); if(gemerktesPw) oeffnen(gemerktesPw, false); }
 
+
+// ---------------------------------------------------------------------------
+// Profil-Editor. Das Profil kommt verschluesselt mit den Daten; Aenderungen
+// werden als Text kopiert und von der betreuenden Person eingespielt.
+// ---------------------------------------------------------------------------
+const ABSCHNITTE = [
+  {key:"leistung_stark", typ:"gewichtet", titel:"Starke Leistungen",
+   text:"Tätigkeiten, die allein schon als passende Leistung zählen. Übliche Punkte: 6 bis 10."},
+  {key:"leistung_schwach", typ:"gewichtet", titel:"Allgemeine Leistungen",
+   text:"Allgemeine Tätigkeiten (etwa „Studie“), die nur zusammen mit einem Kernthema zählen. Übliche Punkte: 2 bis 5."},
+  {key:"thema_kern", typ:"gewichtet", titel:"Kernthemen",
+   text:"Themen, um die es gehen soll. Übliche Punkte: 5 bis 10."},
+  {key:"thema_erweitert", typ:"gewichtet", titel:"Randthemen",
+   text:"Breite Themen, die nur zählen, wenn auch eine starke Leistung und ein Kontextwort vorkommen. Übliche Punkte: 3 bis 6."},
+  {key:"kontext", typ:"liste", titel:"Kontextwörter",
+   text:"Wörter, die den gewünschten Blickwinkel anzeigen. Je Treffer 2 Punkte, höchstens 6."},
+  {key:"abzug", typ:"gewichtet", negativ:true, titel:"Abzüge für fachfremde Leistungen",
+   text:"Kommt eines dieser Wörter vor, werden Punkte abgezogen. Die Zahl wird immer als Abzug gewertet, ein Minuszeichen ist nicht nötig."},
+  {key:"ausschluss_titel", typ:"liste", titel:"Ausschlusswörter im Titel",
+   text:"Steht eines dieser Wörter im Titel, fällt die Bekanntmachung ganz heraus."},
+  {key:"falsche_freunde", typ:"freunde", titel:"Falsche Freunde",
+   text:"Längere Wörter, in denen ein Stichwort steckt, ohne gemeint zu sein. Links das Stichwort genau so, wie es oben steht; rechts die Ausnahmen, durch Komma getrennt. Beispiel: „studie“ / „studiengang, studierende“."},
+  {key:"region_bonus", typ:"codes", titel:"Regionen mit Bonus",
+   text:"Zusatzpunkte für Ausschreibungen aus einer Region, nur bei vollem Treffer. Code nach NUTS: DE1 Baden-Württemberg, DE2 Bayern, DE3 Berlin, DE4 Brandenburg, DE5 Bremen, DE6 Hamburg, DE7 Hessen, DE8 Mecklenburg-Vorpommern, DE9 Niedersachsen, DEA Nordrhein-Westfalen, DEB Rheinland-Pfalz, DEC Saarland, DED Sachsen, DEE Sachsen-Anhalt, DEF Schleswig-Holstein, DEG Thüringen.",
+   spalten:["NUTS-Code", "Bezeichnung"]},
+  {key:"cpv_bonus", typ:"codes", titel:"CPV-Codes mit Bonus",
+   text:"Leistungscodes, die Auftraggeber ihren Ausschreibungen zuordnen. Endnullen dürfen stehen bleiben (79315000 gilt für alle Codes, die mit 79315 beginnen). Die Bezeichnung erscheint als grünes Etikett.",
+   spalten:["CPV-Code", "Bezeichnung"]},
+  {key:"cpv_abzug", typ:"codes", negativ:true, titel:"CPV-Codes mit Abzug",
+   text:"Anfang eines CPV-Codes, der auf fachfremde Leistungen deutet (etwa 45 für Bauleistungen). Der stärkste Abzug zählt einmal.",
+   spalten:["CPV-Anfang", "Bezeichnung"]},
+  {key:"cpv_leistung", typ:"liste", titel:"CPV-Codes, die als starke Leistung gelten",
+   text:"Anfänge von CPV-Codes. Eine Ausschreibung mit einem solchen Code gilt als passende Leistung, auch ohne Leistungswort im Text."},
+  {key:"cpv_thema", typ:"liste", titel:"CPV-Codes, die als Thema gelten",
+   text:"Anfänge von CPV-Codes, die als Thema zählen, auch ohne Themenwort im Text."},
+  {key:"ted_volltext", typ:"liste", titel:"Suchbegriffe für die EU-Datenbank TED",
+   text:"Vorfilter für die Abfrage bei TED. Nur was einen dieser Begriffe enthält, wird überhaupt geladen und dann bewertet. Hier Großschreibung und Umlaute wie im Text verwenden."},
+  {key:"_zahlen", typ:"zahlen", titel:"Schwellen und feste Punkte", felder:[
+    {key:"mindestpunkte", label:"Ab wie vielen Punkten ein Eintrag als Treffer gilt"},
+    {key:"speicher_mindestpunkte", label:"Ab wie vielen Punkten ein Eintrag als Grenzfall behalten wird"},
+    {key:"foerderaufruf_punkte", label:"Leistungspunkte, die ein Förderaufruf automatisch erhält"}]},
+];
+const ENTWURF_KEY = "radar_profil_entwurf";
+
+function editorStarten(original){
+  if(!original || !Object.keys(original).length){
+    document.querySelector("details.editor").style.display = "none";
+    return;
+  }
+  const basisText = JSON.stringify(original);
+  const esc = s => { const p = document.createElement("span"); p.textContent = s == null ? "" : s; return p.innerHTML; };
+  const klon = o => JSON.parse(JSON.stringify(o));
+
+  // Arbeitsform: je Abschnitt eine Zeilenliste, damit Bearbeiten einfach bleibt
+  function zuZeilen(profil){
+    const z = {};
+    for(const a of ABSCHNITTE){
+      const w = profil[a.key];
+      if(a.typ === "gewichtet") z[a.key] = Object.entries(w || {}).filter(([k]) => !k.startsWith("_")).map(([k, v]) => ({wort:k, punkte:Math.abs(+v)}));
+      else if(a.typ === "liste") z[a.key] = (w || []).map(x => ({wort:String(x)}));
+      else if(a.typ === "freunde") z[a.key] = Object.entries(w || {}).map(([k, v]) => ({wort:k, ausnahmen:(v || []).join(", ")}));
+      else if(a.typ === "codes") z[a.key] = Object.entries(w || {}).filter(([k]) => !k.startsWith("_")).map(([k, v]) => ({wort:k, label:(v || [])[0] || "", punkte:Math.abs(+((v || [])[1] || 0))}));
+      else if(a.typ === "zahlen") z[a.key] = Object.fromEntries(a.felder.map(f => [f.key, profil[f.key] ?? ""]));
+    }
+    return z;
+  }
+  function zuProfil(z){
+    const p = klon(original);
+    const sauber = t => String(t || "").trim().replace(/\s+/g, " ");
+    const ganz = v => { const n = parseInt(v, 10); return isNaN(n) ? 0 : n; };
+    for(const a of ABSCHNITTE){
+      const zeilen = z[a.key];
+      if(a.typ === "gewichtet"){
+        const o = {};
+        for(const r of zeilen){ const w = sauber(r.wort).toLowerCase(); if(w) o[w] = (a.negativ ? -1 : 1) * Math.abs(ganz(r.punkte)); }
+        p[a.key] = o;
+      } else if(a.typ === "liste"){
+        const gesehen = new Set(), l = [];
+        for(const r of zeilen){ const w = a.key === "ted_volltext" ? sauber(r.wort) : sauber(r.wort).toLowerCase();
+          if(w && !gesehen.has(w)){ gesehen.add(w); l.push(w); } }
+        p[a.key] = l;
+      } else if(a.typ === "freunde"){
+        const o = {};
+        for(const r of zeilen){ const w = sauber(r.wort).toLowerCase();
+          const aus = String(r.ausnahmen || "").split(",").map(x => sauber(x).toLowerCase()).filter(Boolean);
+          if(w && aus.length) o[w] = aus; }
+        p[a.key] = o;
+      } else if(a.typ === "codes"){
+        const o = {};
+        for(const r of zeilen){ const c = sauber(r.wort).toUpperCase(); if(c) o[c] = [sauber(r.label) || c, (a.negativ ? -1 : 1) * Math.abs(ganz(r.punkte))]; }
+        p[a.key] = o;
+      } else if(a.typ === "zahlen"){
+        for(const f of a.felder){ const v = zeilen[f.key]; if(v !== "" && v != null) p[f.key] = ganz(v); }
+      }
+    }
+    return p;
+  }
+
+  let zeilen;
+  try {
+    const gespeichert = JSON.parse(speicherLesen(ENTWURF_KEY) || "null");
+    zeilen = gespeichert && gespeichert.basis === basisText ? gespeichert.zeilen : zuZeilen(original);
+  } catch(e){ zeilen = zuZeilen(original); }
+  const offenAbschnitte = new Set();
+
+  function entwurfSichern(){
+    const geaendert = JSON.stringify(zuProfil(zeilen)) !== JSON.stringify(zuProfil(zuZeilen(original)));
+    speicherSchreiben(ENTWURF_KEY, geaendert ? JSON.stringify({basis:basisText, zeilen}) : null);
+    document.getElementById("ed-status").textContent = geaendert ? "Entwurf mit Änderungen (nur in diesem Browser gespeichert)" : "";
+  }
+
+  function abschnittGeaendert(a){
+    const vorher = zuProfil(zuZeilen(original)), nachher = zuProfil(zeilen);
+    if(a.typ === "zahlen") return a.felder.some(f => vorher[f.key] !== nachher[f.key]);
+    return JSON.stringify(vorher[a.key]) !== JSON.stringify(nachher[a.key]);
+  }
+
+  function zeileHtml(a, r, i){
+    const neu = r.neu ? " neu" : "";
+    const weg = '<button type="button" class="weg" data-weg="' + i + '" title="Entfernen" aria-label="Entfernen">✕</button>';
+    if(a.typ === "gewichtet")
+      return '<div class="zeile' + neu + '" data-i="' + i + '"><input type="text" data-feld="wort" value="' + esc(r.wort) + '" aria-label="Wort">' +
+        '<input type="number" data-feld="punkte" min="0" max="50" value="' + esc(r.punkte) + '" aria-label="Punkte" title="' + (a.negativ ? "Abzug in Punkten" : "Punkte") + '">' + weg + '</div>';
+    if(a.typ === "liste")
+      return '<div class="zeile' + neu + '" data-i="' + i + '"><input type="text" data-feld="wort" value="' + esc(r.wort) + '" aria-label="Wort">' + weg + '</div>';
+    if(a.typ === "freunde")
+      return '<div class="zeile' + neu + '" data-i="' + i + '"><input type="text" data-feld="wort" value="' + esc(r.wort) + '" aria-label="Stichwort" style="flex:0 0 32%">' +
+        '<input type="text" data-feld="ausnahmen" value="' + esc(r.ausnahmen) + '" aria-label="Ausnahmen">' + weg + '</div>';
+    if(a.typ === "codes")
+      return '<div class="zeile' + neu + '" data-i="' + i + '"><input type="text" data-feld="wort" value="' + esc(r.wort) + '" aria-label="' + esc(a.spalten[0]) + '" placeholder="' + esc(a.spalten[0]) + '" style="flex:0 0 28%">' +
+        '<input type="text" data-feld="label" value="' + esc(r.label) + '" aria-label="' + esc(a.spalten[1]) + '" placeholder="' + esc(a.spalten[1]) + '">' +
+        '<input type="number" data-feld="punkte" min="0" max="50" value="' + esc(r.punkte) + '" aria-label="Punkte">' + weg + '</div>';
+    return "";
+  }
+
+  function abschnittHtml(a){
+    const geaendert = abschnittGeaendert(a) ? ' <span class="geaendert">· geändert</span>' : "";
+    let inhalt;
+    if(a.typ === "zahlen"){
+      inhalt = '<div class="zahlen">' + a.felder.map(f => '<label><span>' + esc(f.label) + '</span><input type="number" min="0" max="100" data-zahl="' +
+        f.key + '" value="' + esc(zeilen[a.key][f.key]) + '"></label>').join("") + '</div>';
+      return '<details class="abschnitt" data-key="' + a.key + '"' + (offenAbschnitte.has(a.key) ? " open" : "") + '><summary>' + esc(a.titel) + geaendert + '</summary>' +
+        '<div class="abschnitt-inhalt">' + inhalt + '</div></details>';
+    }
+    const z = zeilen[a.key];
+    inhalt = '<p>' + esc(a.text) + '</p><div class="zeilen">' + z.map((r, i) => zeileHtml(a, r, i)).join("") + '</div>' +
+      '<p style="margin-top:8px"><button type="button" class="knopf klein" data-neu="1">+ Eintrag hinzufügen</button></p>';
+    return '<details class="abschnitt" data-key="' + a.key + '"' + (offenAbschnitte.has(a.key) ? " open" : "") + '><summary>' + esc(a.titel) +
+      ' <span class="anz">(' + z.length + ')</span>' + geaendert + '</summary><div class="abschnitt-inhalt">' + inhalt + '</div></details>';
+  }
+
+  const behaelter = document.getElementById("ed-abschnitte");
+  function zeichneAlles(){ behaelter.innerHTML = ABSCHNITTE.map(abschnittHtml).join(""); filtern(); entwurfSichern(); }
+  function zeichneAbschnitt(key, fokusLetzte){
+    const a = ABSCHNITTE.find(x => x.key === key);
+    const alt = behaelter.querySelector('details[data-key="' + key + '"]');
+    const tmp = document.createElement("div"); tmp.innerHTML = abschnittHtml(a);
+    alt.replaceWith(tmp.firstChild);
+    if(fokusLetzte){ const f = behaelter.querySelectorAll('details[data-key="' + key + '"] .zeile input[data-feld="wort"]'); if(f.length) f[f.length - 1].focus(); }
+    filtern(); entwurfSichern();
+  }
+  function kopfAktualisieren(key){
+    const a = ABSCHNITTE.find(x => x.key === key);
+    const sum = behaelter.querySelector('details[data-key="' + key + '"] > summary');
+    const g = sum.querySelector(".geaendert"), ist = abschnittGeaendert(a);
+    if(ist && !g) sum.insertAdjacentHTML("beforeend", ' <span class="geaendert">· geändert</span>');
+    if(!ist && g) g.remove();
+  }
+
+  function filtern(){
+    const f = document.getElementById("ed-filter").value.trim().toLowerCase();
+    behaelter.querySelectorAll(".zeile").forEach(z => {
+      const text = [...z.querySelectorAll("input")].map(i => i.value.toLowerCase()).join(" ");
+      z.classList.toggle("versteckt", !!f && !text.includes(f));
+    });
+    if(f) behaelter.querySelectorAll("details.abschnitt").forEach(d => {
+      if(d.querySelector(".zeile:not(.versteckt)")){ d.open = true; offenAbschnitte.add(d.dataset.key); }
+    });
+  }
+
+  behaelter.addEventListener("toggle", e => {
+    const d = e.target; if(!d.dataset || !d.dataset.key) return;
+    d.open ? offenAbschnitte.add(d.dataset.key) : offenAbschnitte.delete(d.dataset.key);
+  }, true);
+  behaelter.addEventListener("input", e => {
+    const d = e.target.closest("details.abschnitt"); if(!d) return;
+    const key = d.dataset.key;
+    if(e.target.dataset.zahl){ zeilen[key][e.target.dataset.zahl] = e.target.value; }
+    else { const i = +e.target.closest(".zeile").dataset.i; zeilen[key][i][e.target.dataset.feld] = e.target.value; }
+    kopfAktualisieren(key); entwurfSichern();
+  });
+  behaelter.addEventListener("click", e => {
+    const d = e.target.closest("details.abschnitt"); if(!d) return;
+    const key = d.dataset.key, a = ABSCHNITTE.find(x => x.key === key);
+    if(e.target.dataset.weg !== undefined){ zeilen[key].splice(+e.target.dataset.weg, 1); zeichneAbschnitt(key); }
+    else if(e.target.dataset.neu){
+      const leer = {wort:"", neu:true}; if(a.typ === "gewichtet" || a.typ === "codes") leer.punkte = a.negativ ? 10 : 5;
+      if(a.typ === "codes") leer.label = ""; if(a.typ === "freunde") leer.ausnahmen = "";
+      document.getElementById("ed-filter").value = "";
+      zeilen[key].push(leer); zeichneAbschnitt(key, true);
+    }
+  });
+  document.getElementById("ed-filter").addEventListener("input", filtern);
+
+  // Aenderungsliste in Klartext, damit die betreuende Person sieht, was sich aendert
+  function aenderungen(){
+    const vorher = zuProfil(zuZeilen(original)), nachher = zuProfil(zeilen), out = [];
+    for(const a of ABSCHNITTE){
+      const zeilenText = [];
+      if(a.typ === "zahlen"){
+        for(const f of a.felder) if(vorher[f.key] !== nachher[f.key]) zeilenText.push("  " + f.label + ": " + vorher[f.key] + " → " + nachher[f.key]);
+      } else if(a.typ === "liste"){
+        const v = new Set(vorher[a.key] || []), n = new Set(nachher[a.key] || []);
+        for(const w of n) if(!v.has(w)) zeilenText.push("  + " + w);
+        for(const w of v) if(!n.has(w)) zeilenText.push("  − " + w);
+      } else {
+        const v = vorher[a.key] || {}, n = nachher[a.key] || {};
+        const zeig = x => Array.isArray(x) ? (typeof x[0] === "string" && typeof x[1] === "number" ? x[0] + ", " + x[1] + " Punkte" : x.join(", ")) : x + " Punkte";
+        for(const k of Object.keys(n)) if(!(k in v)) zeilenText.push("  + " + k + " (" + zeig(n[k]) + ")");
+          else if(JSON.stringify(v[k]) !== JSON.stringify(n[k])) zeilenText.push("  ~ " + k + ": " + zeig(v[k]) + " → " + zeig(n[k]));
+        for(const k of Object.keys(v)) if(!(k in n)) zeilenText.push("  − " + k);
+      }
+      if(zeilenText.length) out.push(a.titel + ":\n" + zeilenText.join("\n"));
+    }
+    return out.length ? out.join("\n\n") : "";
+  }
+
+  const meldung = t => { const m = document.getElementById("ed-meldung"); m.textContent = t; setTimeout(() => m.textContent = "", 5000); };
+  function zeigeAenderungen(){
+    const t = aenderungen();
+    document.getElementById("ed-aenderungen").innerHTML = '<div class="aenderungen">' + esc(t || "Keine Änderungen.") + '</div>';
+    return t;
+  }
+  document.getElementById("ed-zeigen").addEventListener("click", zeigeAenderungen);
+  document.getElementById("ed-kopieren").addEventListener("click", async () => {
+    const t = zeigeAenderungen();
+    if(!t){ meldung("Es gibt keine Änderungen."); return; }
+    const json = JSON.stringify(zuProfil(zeilen));
+    const text = "Änderungen am Suchprofil:\n\n" + t + "\n\nNeues Profil (vollständig in das Secret RADAR_PROFIL einfügen):\n\n" + json;
+    const feld = document.getElementById("ed-ausgabe"); feld.hidden = false; feld.value = text;
+    try { await navigator.clipboard.writeText(text); meldung("Kopiert. Jetzt in eine Mail oder Nachricht einfügen."); }
+    catch(e){ feld.select(); meldung("Automatisches Kopieren nicht möglich: Text im Feld markieren und kopieren."); }
+  });
+  document.getElementById("ed-datei").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(zuProfil(zeilen), null, 1)], {type:"application/json"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "suchprofil.json";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
+  document.getElementById("ed-verwerfen").addEventListener("click", () => {
+    if(!aenderungen()){ meldung("Es gibt keine Änderungen."); return; }
+    if(!confirm("Alle Änderungen am Entwurf verwerfen?")) return;
+    zeilen = zuZeilen(original); speicherSchreiben(ENTWURF_KEY, null);
+    document.getElementById("ed-aenderungen").innerHTML = ""; document.getElementById("ed-ausgabe").hidden = true;
+    zeichneAlles(); meldung("Entwurf verworfen.");
+  });
+  zeichneAlles();
+}
+
 function starten(D){
   const DATEN = D.eintraege, QUELLEN = D.quellen;
   const HEUTE = new Date(D.heute + "T00:00:00");
@@ -344,6 +665,7 @@ function starten(D){
     "<li><b>" + esc(q.name) + "</b>" + (q.anzahl != null ? " (" + zahlDe(q.anzahl) + ")" : "") +
     (q.info ? ": " + esc(q.info) : "") + (q.aktualitaet ? " <span class=\"klein\">Aktualität: " + esc(q.aktualitaet) + "</span>" : "") +
     "</li>").join("") || "<li>Keine Angaben.</li>";
+  editorStarten(D.profil || {});
   if(D.demo) document.getElementById("banner").innerHTML =
     '<p class="demo">Beispieldaten. Diese Bekanntmachungen sind erfunden und zeigen nur die Oberfläche.</p>';
 

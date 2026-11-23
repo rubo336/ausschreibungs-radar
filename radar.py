@@ -1294,8 +1294,10 @@ def quellen_info(cfg, anzahl=None):
 
 
 def seite_schreiben(eintraege, pfad, passwort, demo=False, klartext=False, mindestpunkte=None,
-                   quellen_info=None):
+                   quellen_info=None, profil=None):
     nutzdaten = {
+        # Das Profil wird fuer den Editor mitgeliefert, nur verschluesselt in der Seite.
+        "profil": profil or {},
         "quellen_info": quellen_info or [],
         "zeitfenster_tage": GRUNDEINSTELLUNGEN["zeitfenster_tage"],
         "aufbewahrung_tage": GRUNDEINSTELLUNGEN["aufbewahrung_tage"],
@@ -1336,7 +1338,7 @@ def lauf(args):
     if args.demo:
         seite_schreiben(demo_daten(profil), args.ausgabe, passwort, demo=True,
                         klartext=args.klartext, mindestpunkte=profil.get("mindestpunkte"),
-                        quellen_info=quellen_info(cfg))
+                        quellen_info=quellen_info(cfg), profil=profil)
         print("Beispielseite geschrieben.")
         return
 
@@ -1421,7 +1423,8 @@ def lauf(args):
                                                               vorher, entfernt))
     print("%d Treffer, %d Grenzfaelle." % (len(anzeige) - grenzfaelle, grenzfaelle))
     seite_schreiben(anzeige, args.ausgabe, passwort, klartext=args.klartext,
-                    mindestpunkte=schwelle_anzeige, quellen_info=quellen_info(cfg, anzahl))
+                    mindestpunkte=schwelle_anzeige, quellen_info=quellen_info(cfg, anzahl),
+                    profil=profil)
     print("Seite geschrieben.")
 
 
