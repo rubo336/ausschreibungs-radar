@@ -50,7 +50,8 @@ GRUNDEINSTELLUNGEN = {
             "aktiv": True,
             "name": "TED (EU-weit)",
             "endpoint": "https://api.ted.europa.eu/v3/notices/search",
-            "limit": 250,
+            "limit": 250,       # je Seite
+            "max_seiten": 20,   # hoechstens 5000 Bekanntmachungen je Lauf
         },
         "doe": {
             "aktiv": True,
@@ -463,12 +464,33 @@ def hole_ted(cfg, profil, daten, seit):
         warn("TED nicht erreichbar: %s" % type(e).__name__)
         return []
 
+    # Weitere Seiten ueber das Iterationstoken holen (je Seite hoechstens 'limit' Eintraege).
+    notices = list(antwort.get("notices") or [])
+    gesamt = antwort.get("totalNoticeCount") or len(notices)
+    seiten, leer = 1, 0
+    while antwort.get("iterationNextToken") and seiten < q.get("max_seiten", 20) \
+            and len(notices) < gesamt:
+        time.sleep(1.0)
+        try:
+            antwort = http_json(q["endpoint"], dict(payload, iterationNextToken=antwort["iterationNextToken"]))
+        except Exception as e:
+            warn("TED Seite %d: %s" % (seiten + 1, type(e).__name__))
+            break
+        seiten += 1
+        neue = antwort.get("notices") or []
+        # TED liefert gelegentlich eine leere Seite mitten in der Folge; dann weiterblaettern
+        leer = 0 if neue else leer + 1
+        if leer >= 3:
+            break
+        notices += neue
+    print("  %d von %d auf %d Seiten" % (len(notices), gesamt, seiten))
+
     def wert(n, rolle):
         feld = felder.get(rolle)
         return n.get(feld) if feld else None
 
     treffer = []
-    for n in antwort.get("notices", []) or []:
+    for n in notices:
         nummer = pick(wert(n, "nummer"))
         cpvs = wert(n, "cpv") or []
         if isinstance(cpvs, (str, dict)):
@@ -1209,9 +1231,10 @@ def demo_daten(profil):
 # Seite erzeugen
 # --------------------------------------------------------------------------
 
-def seite_schreiben(eintraege, pfad, passwort, demo=False, klartext=False):
+def seite_schreiben(eintraege, pfad, passwort, demo=False, klartext=False, mindestpunkte=None):
     nutzdaten = {
         "eintraege": eintraege,
+        "mindestpunkte": mindestpunkte,
         "stand": dt.datetime.now().strftime("%d.%m.%Y, %H:%M Uhr"),
         "heute": dt.date.today().isoformat(),
         "quellen": sorted({e.get("quelle", "") for e in eintraege}),
@@ -1246,7 +1269,7 @@ def lauf(args):
 
     if args.demo:
         seite_schreiben(demo_daten(profil), args.ausgabe, passwort, demo=True,
-                        klartext=args.klartext)
+                        klartext=args.klartext, mindestpunkte=profil.get("mindestpunkte"))
         print("Beispielseite geschrieben.")
         return
 
@@ -1321,7 +1344,8 @@ def lauf(args):
     print("%d neu, %d im Bestand (vorher %d), %d entfernt." % (neuzugaenge, len(bestand),
                                                               vorher, entfernt))
     print("%d Treffer, %d Grenzfaelle." % (len(anzeige) - grenzfaelle, grenzfaelle))
-    seite_schreiben(anzeige, args.ausgabe, passwort, klartext=args.klartext)
+    seite_schreiben(anzeige, args.ausgabe, passwort, klartext=args.klartext,
+                    mindestpunkte=schwelle_anzeige)
     print("Seite geschrieben.")
 
 

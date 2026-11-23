@@ -62,7 +62,7 @@ ol{list-style:none;margin:0;padding:0}
 li.eintrag{display:grid;grid-template-columns:74px 1fr;gap:0 18px;
   border-bottom:1px solid var(--linie-fein);background:var(--flaeche)}
 li.eintrag:first-child{border-top:1px solid var(--linie-fein)}
-.frist{padding:18px 0 18px 14px;text-align:right;border-right:3px solid var(--linie-fein);
+.frist{padding:18px 10px 18px 8px;text-align:right;border-right:3px solid var(--linie-fein);
   font-variant-numeric:tabular-nums}
 .frist .zahl{display:block;font-size:26px;line-height:1;font-weight:600;letter-spacing:-0.02em}
 .frist .einheit{display:block;font-size:12px;color:var(--leise);margin-top:3px}
@@ -91,6 +91,22 @@ li.weg{opacity:.62}
 li.grenzfall .titel{color:#3d4b46;font-weight:500}
 .balken{margin-top:10px;height:2px;background:var(--linie-fein);position:relative;max-width:190px}
 .balken i{position:absolute;inset:0 auto 0 0;background:var(--signal)}
+.fuss{display:flex;align-items:center;gap:16px;margin-top:10px}
+.fuss .balken{margin-top:0;flex:0 0 190px}
+.aufklapp{font-family:inherit;font-size:13.5px;padding:3px 10px 3px 8px;border:1px solid var(--linie);
+  border-radius:var(--radius);background:transparent;color:var(--signal);cursor:pointer}
+.aufklapp:hover{background:#eef3ee}
+.aufklapp::before{content:"▸ ";display:inline-block;transition:transform .15s}
+li.offen .aufklapp::before{content:"▾ "}
+.titel button:hover{text-decoration:underline;text-decoration-color:var(--linie);text-underline-offset:3px}
+.legende{margin:14px 0 0;font-size:14px;color:#33423d}
+.legende summary{cursor:pointer;color:var(--signal);display:inline-block}
+.legende .inhalt-legende{margin-top:10px;padding:12px 14px;background:var(--flaeche);
+  border:1px solid var(--linie-fein);border-radius:var(--radius);max-width:820px}
+.legende dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:8px 0}
+.legende dt{font-weight:600}
+.legende dd{margin:0}
+.legende p{margin:6px 0}
 .detail{display:none;margin:12px 0 2px;padding-left:12px;border-left:2px solid var(--linie-fein)}
 li.offen .detail{display:block}
 .detail p{margin:0 0 9px;max-width:66ch;color:#33423d}
@@ -106,7 +122,13 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
 @media (max-width:640px){
   h1{font-size:27px}
   li.eintrag{grid-template-columns:56px 1fr;gap:0 12px}
-  .frist{padding-left:8px}
+  .frist{padding:16px 8px 16px 4px}
+  header{display:block}
+  .abmelden{margin-top:12px}
+  .legende dl{grid-template-columns:1fr;gap:2px}
+  .legende dd{margin-bottom:6px}
+  .fuss{flex-wrap:wrap;gap:10px}
+  .fuss .balken{flex:1 1 100%}
   .frist .zahl{font-size:21px}
   .inhalt{padding-right:10px}
   .zaehler{margin-left:0;width:100%}
@@ -132,6 +154,24 @@ footer button{font-family:inherit;font-size:13.5px;padding:6px 11px;border:1px s
     <h1>Ausschreibungs-Radar</h1>
     <p class="stand" id="stand"></p>
     <div id="banner"></div>
+    <details class="legende">
+      <summary>Wie entsteht die Passung?</summary>
+      <div class="inhalt-legende">
+        <p>Jede Bekanntmachung wird anhand des Suchprofils mit Punkten bewertet. Der Balken unter dem Titel zeigt die Punktzahl,
+          die genaue Aufschlüsselung steht in den Details eines Eintrags.</p>
+        <dl>
+          <dt>Leistung</dt><dd>Wörter für gesuchte Tätigkeiten. Starke Leistungswörter reichen allein, allgemeine (etwa „Studie“) zählen nur zusammen mit einem Kernthema.</dd>
+          <dt>Thema</dt><dd>Wörter für gesuchte Themen. Randthemen zählen nur, wenn auch eine starke Leistung und ein Kontextwort vorkommen.</dd>
+          <dt>Kontext</dt><dd>Wörter, die den passenden Blickwinkel anzeigen, je 2 Punkte, höchstens 6.</dd>
+          <dt>CPV</dt><dd>Bonus für passende Leistungscodes, die der Auftraggeber vergeben hat (grünes Etikett).</dd>
+          <dt>Region</dt><dd>Bonus für bevorzugte Regionen (braunes Etikett).</dd>
+          <dt>Abzug</dt><dd>Minuspunkte für fachfremde Leistungen, etwa Bau, Technik oder Warenlieferungen.</dd>
+        </dl>
+        <p>Treffer im Titel zählen anderthalbfach. Als <b>Treffer</b> gilt ein Eintrag, der Leistung <i>und</i> Thema trifft und
+          mindestens <span id="schwelle">8</span> Punkte erreicht. Trifft er nur eine Seite oder bleibt knapp darunter, ist er ein
+          <b>Grenzfall</b>; diese erscheinen nur, wenn oben „Grenzfälle“ eingeschaltet ist.</p>
+      </div>
+    </details>
   </div>
   <button class="abmelden" id="abmelden" type="button">Abmelden</button>
 </header>
@@ -213,6 +253,7 @@ function starten(D){
   const DATEN = D.eintraege, QUELLEN = D.quellen;
   const HEUTE = new Date(D.heute + "T00:00:00");
   document.getElementById("stand").textContent = "Stand " + D.stand;
+  if(D.mindestpunkte) document.getElementById("schwelle").textContent = D.mindestpunkte;
   if(D.demo) document.getElementById("banner").innerHTML =
     '<p class="demo">Beispieldaten. Diese Bekanntmachungen sind erfunden und zeigen nur die Oberfläche.</p>';
 
@@ -281,8 +322,8 @@ function starten(D){
       if(t !== null){ if(t < 0) klasse = "weg"; else if(t <= 7) klasse = "knapp"; else if(t <= 21) klasse = "bald"; }
       if(offen.has(n.id)) klasse += " offen";
       if(n.grenzfall) klasse += " grenzfall";
-      const zahl = t === null ? "–" : Math.abs(t);
-      const einheit = t === null ? "keine Frist" : (t < 0 ? "Tage vorbei" : (t === 1 ? "Tag übrig" : "Tage übrig"));
+      const zahl = t === null ? "–" : (t === 0 ? "!" : Math.abs(t));
+      const einheit = t === null ? "keine Frist" : (t === 0 ? "heute" : (t < 0 ? (t === -1 ? "Tag vorbei" : "Tage vorbei") : (t === 1 ? "Tag übrig" : "Tage übrig")));
       const w = n.wertung || {};
       const chips = []
         .concat(n.grenzfall ? ['<span class="chip grenz">Grenzfall' + (w.regel ? ': ' + esc(w.regel) : '') + '</span>'] : [])
@@ -307,7 +348,11 @@ function starten(D){
         '</div>' +
         '<p class="meta">' + meta + '</p>' +
         (chips ? '<div class="chips">' + chips + '</div>' : '') +
-        '<div class="balken" title="Passung ' + (n.punkte||0) + ' Punkte"><i style="width:' + breite + '%"></i></div>' +
+        '<div class="fuss">' +
+          '<div class="balken" title="Passung ' + (n.punkte||0) + ' Punkte"><i style="width:' + breite + '%"></i></div>' +
+          '<button type="button" class="aufklapp" data-auf="' + esc(n.id) + '" aria-expanded="' + offen.has(n.id) + '">' +
+            (offen.has(n.id) ? 'Details ausblenden' : 'Details anzeigen') + '</button>' +
+        '</div>' +
         '<div class="detail">' +
           (n.beschreibung ? '<p>' + esc(n.beschreibung) + '</p>' : '<p>Keine Beschreibung im Datensatz.</p>') +
           (n.cpv && n.cpv.length ? '<p>CPV: ' + esc(n.cpv.join(", ")) + '</p>' : '') +
