@@ -121,6 +121,7 @@ PROFIL_STANDARD = {
     "cpv_abzug": {},
     "cpv_leistung": [],
     "cpv_thema": [],
+    "region_bonus": {},
     "ted_laender": ["DEU"],
     "ted_volltext": [],
 }
@@ -1131,8 +1132,17 @@ def bewerte(n, profil):
     bonus_kontext = 2 * min(len(kontext), 3)
     punkte = leistung + kern + erweitert + bonus_kontext + abzug_wort + cpv_abzug
 
+    # Regionalbonus: NUTS-Praefix aus dem Profil, nur bei vollem Treffer.
+    region = str(n.get("region") or "").upper()
+    if not region and NUTS_MUSTER.match(str(n.get("ort") or "").strip().upper()):
+        region = str(n.get("ort")).strip().upper()
+    region_bonus, region_label = 0, ""
+    for praefix, (label, gewicht) in _tabelle(profil, "region_bonus").items():
+        if region.startswith(praefix.upper()) and gewicht > region_bonus:
+            region_bonus, region_label = gewicht, label
+
     if hat_leistung and hat_thema:
-        punkte += cpv_bonus
+        punkte += cpv_bonus + region_bonus
         regel = ""
     else:
         if schwach and not stark and not kern:
@@ -1152,6 +1162,8 @@ def bewerte(n, profil):
         "leistung": int(round(leistung)), "thema": int(round(kern + erweitert)),
         "kontext": bonus_kontext, "abzug": int(round(abzug_wort)),
         "cpv": int(round(cpv_bonus)) if not regel else 0,
+        "region": region_bonus if not regel else 0,
+        "region_name": region_label,
         "cpv_abzug": int(round(cpv_abzug)),
         "abzug_grund": ", ".join(a_treffer[:3] + ([abzug_label] if abzug_label else [])),
         "regel": regel,

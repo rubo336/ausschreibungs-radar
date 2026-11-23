@@ -31,6 +31,7 @@ Treffer im Titel zählen anderthalbfach.
 | `cpv_abzug` | CPV-Präfix → [Bezeichnung, negative Punkte]. Der stärkste Abzug zählt einmal |
 | `cpv_leistung` | Liste von CPV-Präfixen, die als starke Leistung gelten |
 | `cpv_thema` | Liste von CPV-Präfixen, die als Thema gelten |
+| `region_bonus` | NUTS-Präfix → [Bezeichnung, Punkte]. Zusatzpunkte für Ausschreibungen aus dieser Region, nur bei vollem Treffer. Beispiel: `{"DE1": ["Baden-Württemberg", 5]}` |
 | `ted_laender` | Länderkürzel für die TED-Abfrage, z. B. `["DEU"]` |
 | `ted_volltext` | Suchbegriffe für die TED-Abfrage (TED liefert höchstens 250 Einträge) |
 

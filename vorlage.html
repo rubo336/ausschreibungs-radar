@@ -87,6 +87,7 @@ li.weg{opacity:.62}
 .chip.cpv{border-color:var(--signal);color:var(--signal)}
 .chip.neu{border-color:var(--neu);color:var(--neu);font-weight:600}
 .chip.grenz{border-style:dashed;color:var(--leise)}
+.chip.region{border-color:#8a6d1e;color:#8a6d1e}
 li.grenzfall .titel{color:#3d4b46;font-weight:500}
 .balken{margin-top:10px;height:2px;background:var(--linie-fein);position:relative;max-width:190px}
 .balken i{position:absolute;inset:0 auto 0 0;background:var(--signal)}
@@ -286,6 +287,7 @@ function starten(D){
       const chips = []
         .concat(n.grenzfall ? ['<span class="chip grenz">Grenzfall' + (w.regel ? ': ' + esc(w.regel) : '') + '</span>'] : [])
         .concat(n.neu ? ['<span class="chip neu">neu</span>'] : [])
+        .concat(w.region_name ? ['<span class="chip region">' + esc(w.region_name) + '</span>'] : [])
         .concat((n.cpv_treffer||[]).map(c => '<span class="chip cpv">' + esc(c) + '</span>'))
         .concat((n.treffer||[]).slice(0,5).map(c => '<span class="chip">' + esc(c) + '</span>'))
         .join("");
@@ -310,7 +312,7 @@ function starten(D){
           (n.beschreibung ? '<p>' + esc(n.beschreibung) + '</p>' : '<p>Keine Beschreibung im Datensatz.</p>') +
           (n.cpv && n.cpv.length ? '<p>CPV: ' + esc(n.cpv.join(", ")) + '</p>' : '') +
           '<p class="wertung">Passung ' + (n.punkte||0) + ': Leistung ' + (w.leistung||0) + ', Thema ' + (w.thema||0) +
-            ', Kontext ' + (w.kontext||0) + (w.cpv ? ', CPV ' + w.cpv : '') +
+            ', Kontext ' + (w.kontext||0) + (w.cpv ? ', CPV ' + w.cpv : '') + (w.region ? ', Region ' + w.region : '') +
             (abzug ? ', Abzug ' + abzug + (w.abzug_grund ? ' (' + esc(w.abzug_grund) + ')' : '') : '') + '</p>' +
           (url ? '<p><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Bekanntmachung öffnen</a></p>' : '') +
         '</div></div></li>';
